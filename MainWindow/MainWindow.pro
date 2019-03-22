@@ -56,3 +56,9 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../client_tcp/debug
 
 INCLUDEPATH += $$PWD/../client_tcp
 DEPENDPATH += $$PWD/../client_tcp
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../tcp_thread/release/ -ltcp_thread
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../tcp_thread/debug/ -ltcp_thread
+
+INCLUDEPATH += $$PWD/../tcp_thread
+DEPENDPATH += $$PWD/../tcp_thread

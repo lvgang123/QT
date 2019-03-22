@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -11,9 +11,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //子线程的调用
     myT1=new Mythread;
+    myT2=new Tcp_thread;
     thread1=new QThread(this);
+    thread2=new QThread(this);
     myT1->moveToThread(thread1);
+    myT2->moveToThread(thread2);
     connect(this,&MainWindow::startthread,myT1,&Mythread::clink);
+    connect(this,&MainWindow::startthread2,myT2,&Tcp_thread::clink);
 }
 
 MainWindow::~MainWindow()
@@ -23,6 +27,9 @@ MainWindow::~MainWindow()
     if(this->mysql==NULL){
         delete mysql;
     }
+    if(T_2)
+    colsethread2();
+
     delete ui;
 }
 
@@ -48,11 +55,39 @@ void MainWindow::on_button_connect1_clicked()
     }
 }
 
+void MainWindow::on_button_connect2_clicked()
+{
+    if(ui->button_connect2->text()=="连接2"){
+        T_2=true;
+        //启动线程，但没有启动线程处理函数
+        qDebug()<<"线程2调用开始";
+        thread2->start();
+
+        //不能直接调用线程处理函数，直接调用导致线程处理函数和主线程在同一线程
+
+        //只能通过signal-slot方式调用
+        emit startthread2();
+
+        //更改按钮显示
+        ui->button_connect2->setText("取消连接2");
+         qDebug()<<"线程2调用完成";
+    }else{
+       colsethread2();
+       ui->button_connect2->setText("连接2");
+    }
+}
+
 void MainWindow::colsethread1(){
     T_1=false;
     //关闭线程，此种方式比较温柔不会造成内存问题，要等待线程执行完成后退出
     thread1->quit();
     thread1->wait();
+}
+void MainWindow::colsethread2(){
+    T_2=false;
+    //关闭线程，此种方式比较温柔不会造成内存问题，要等待线程执行完成后退出
+    thread2->quit();
+    thread2->wait();
 }
 
 void MainWindow::on_button_statis_clicked()
@@ -79,3 +114,5 @@ void MainWindow::on_putton_set_clicked()
 {
     ui->stackedWidget->setCurrentIndex(4);
 }
+
+
