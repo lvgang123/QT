@@ -6,6 +6,7 @@
 #include <QTcpSocket> //tcp套接字
 #include <QDebug>
 #include <QTimer>
+#include <QMutex>
 #include "client_tcp_global.h"
 
 class CLIENT_TCPSHARED_EXPORT Client_tcp
@@ -37,6 +38,7 @@ private:
     QByteArray array1 ;
     QTimer *mytime;
     bool is_setsql;
+    QMutex mutex;
 };
 
 #endif // CLIENT_TCP_H

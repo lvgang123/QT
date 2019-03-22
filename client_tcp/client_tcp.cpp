@@ -34,9 +34,11 @@ void Client_tcp::tcptransmit(QString ipstr, int ports,QTcpSocket *tcpsocket,QTim
     connect(mytime,&QTimer::timeout,
             [=]()
             {
+            mutex.lock();
             //给指定的IP发送数据
             tcpsocket->write(array1);
             emit mysignal();//信号测试,验证库是否能够信号传递
+            mutex.unlock();
             });
 
     //tcp通讯接收
@@ -44,6 +46,7 @@ void Client_tcp::tcptransmit(QString ipstr, int ports,QTcpSocket *tcpsocket,QTim
    connect(tcpsocket, &QTcpSocket::readyRead,
            [=]()
            {
+               mutex.lock();
                QByteArray buffer;
                char* cha1;
                //读取缓冲区数据
@@ -53,6 +56,7 @@ void Client_tcp::tcptransmit(QString ipstr, int ports,QTcpSocket *tcpsocket,QTim
                {
                    sendMsg(cha1,str_sql);   //接收数据
                }
+               mutex.unlock();
            });
 }
 
